@@ -147,18 +147,12 @@
       <label for="time">Välj träning</label>
       <select id="time">
         <option value="">Välj träning</option>
-        <option value="Torsdag 17–18 – Öppen träning F18 F19">
-          Torsdag 17–18 – Öppen träning F18 F19
-        </option>
-        <option value="Söndag 10–11 – Öppen träning P/F 2020–2021">
-          Söndag 10–11 – Öppen träning P/F 2020–2021
-        </option>
-        <option value="Söndag 15:15–16:15 – Öppen träning F15 F16 F17">
-          Söndag 15:15–16:15 – Öppen träning F15 F16 F17
-        </option>
+        <option value="Torsdag 17–18 – Öppen träning F18 F19">Torsdag 17–18 – Öppen träning F18 F19</option>
+        <option value="Söndag 10–11 – Öppen träning P/F 2020–2021">Söndag 10–11 – Öppen träning P/F 2020–2021</option>
+        <option value="Söndag 15:15–16:15 – Öppen träning F15 F16 F17">Söndag 15:15–16:15 – Öppen träning F15 F16 F17</option>
       </select>
 
-      <button onclick="bookTraining()">Boka plats</button>
+      <button type="button" onclick="bookTraining()">Boka plats</button>
 
       <div id="successMessage" class="success"></div>
       <div id="errorMessage" class="error"></div>
@@ -185,87 +179,97 @@
   </div>
 
   <script>
-    <script>
-  const maxSpots = 20;
+    const maxSpots = 20;
 
-  function updateSpots(listId, spotsId) {
-    const currentCount = document.getElementById(listId).children.length;
-    const remaining = maxSpots - currentCount;
-    const spotsElement = document.getElementById(spotsId);
+    function updateSpots(listId, spotsId) {
+      const currentCount = document.getElementById(listId).children.length;
+      const remaining = maxSpots - currentCount;
+      const spotsElement = document.getElementById(spotsId);
 
-    if (remaining <= 0) {
-      spotsElement.innerHTML = '<span class="full">Fullbokat</span>';
-    } else {
-      spotsElement.textContent = 'Platser kvar: ' + remaining;
-    }
-  }
-
-  async function bookTraining() {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const time = document.getElementById("time").value;
-    const successMessage = document.getElementById("successMessage");
-    const errorMessage = document.getElementById("errorMessage");
-
-    successMessage.style.display = "none";
-    errorMessage.style.display = "none";
-
-    if (!name || !email || !time) {
-      errorMessage.textContent = "Fyll i namn, mailadress och välj träning.";
-      errorMessage.style.display = "block";
-      return;
+      if (remaining <= 0) {
+        spotsElement.innerHTML = '<span class="full">Fullbokat</span>';
+      } else {
+        spotsElement.textContent = 'Platser kvar: ' + remaining;
+      }
     }
 
-    let listId = "";
-    let spotsId = "";
+    async function bookTraining() {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const time = document.getElementById("time").value;
+      const successMessage = document.getElementById("successMessage");
+      const errorMessage = document.getElementById("errorMessage");
 
-    if (time.includes("Torsdag")) {
-      listId = "list1";
-      spotsId = "spots1";
-    } else if (time.includes("10–11")) {
-      listId = "list2";
-      spotsId = "spots2";
-    } else if (time.includes("15:15")) {
-      listId = "list3";
-      spotsId = "spots3";
+      successMessage.style.display = "none";
+      errorMessage.style.display = "none";
+
+      if (!name || !email || !time) {
+        errorMessage.textContent = "Fyll i namn, mailadress och välj träning.";
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      let listId = "";
+      let spotsId = "";
+
+      if (time.includes("Torsdag")) {
+        listId = "list1";
+        spotsId = "spots1";
+      } else if (time.includes("10–11")) {
+        listId = "list2";
+        spotsId = "spots2";
+      } else if (time.includes("15:15")) {
+        listId = "list3";
+        spotsId = "spots3";
+      } else {
+        errorMessage.textContent = "Kunde inte hitta rätt träning.";
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      const currentCount = document.getElementById(listId).children.length;
+
+      if (currentCount >= maxSpots) {
+        errorMessage.textContent = "Tyvärr, den här träningen är fullbokad.";
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      const li = document.createElement("li");
+      li.textContent = name + " (" + email + ")";
+      document.getElementById(listId).appendChild(li);
+
+      updateSpots(listId, spotsId);
+
+      try {
+        await fetch("https://script.google.com/a/macros/unikum.net/s/AKfycbwxD6xGW_MiIAS1RsDfkQfS-wVf3qa9V2TilVJTlZTGCRgRgGdejaIU09JLgNTbm4nAPQ/exec", {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+          },
+          body: JSON.stringify({
+            name: name,
+            time: time,
+            email: email
+          }),
+        });
+
+        successMessage.textContent = "Tack! Din bokning är registrerad för: " + time;
+        successMessage.style.display = "block";
+
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("time").value = "";
+      } catch (error) {
+        errorMessage.textContent = "Något gick fel vid bokningen.";
+        errorMessage.style.display = "block";
+      }
     }
 
-    const currentCount = document.getElementById(listId).children.length;
-
-    if (currentCount >= maxSpots) {
-      errorMessage.textContent = "Tyvärr, den här träningen är fullbokad.";
-      errorMessage.style.display = "block";
-      return;
-    }
-
-    const li = document.createElement("li");
-    li.textContent = name + " (" + email + ")";
-    document.getElementById(listId).appendChild(li);
-
-    updateSpots(listId, spotsId);
-
-    fetch("DIN_WEBAPP_URL", {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8",
-      },
-      body: JSON.stringify({
-        name: name,
-        email: email,
-        time: time
-      }),
-    });
-
-    successMessage.textContent = "Tack! Din bokning är registrerad för: " + time;
-    successMessage.style.display = "block";
-
-    document.getElementById("name").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("time").value = "";
-  }
-
-  updateSpots("list1", "spots1");
-  updateSpots("list2", "spots2");
-  updateSpots("list3", "spots3");
-</script>
+    updateSpots("list1", "spots1");
+    updateSpots("list2", "spots2");
+    updateSpots("list3", "spots3");
+  </script>
+</body>
+</html>
