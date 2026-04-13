@@ -67,8 +67,12 @@
       const li = document.createElement("li");
       li.textContent = name;
       document.getElementById(listId).appendChild(li);
-     fetch("https://script.google.com/a/macros/unikum.net/s/AKfycbwxD6xGW_MiIAS1RsDfkQfS-wVf3qa9V2TilVJTlZTGCRgRgGdejaIU09JLgNTbm4nAPQ/exec", {
+fetch("https://script.google.com/a/macros/unikum.net/s/AKfycbwxD6xGW_MiIAS1RsDfkQfS-wVf3qa9V2TilVJTlZTGCRgRgGdejaIU09JLgNTbm4nAPQ/exec", {
   method: "POST",
+  mode: "no-cors",
+  headers: {
+    "Content-Type": "text/plain;charset=utf-8",
+  },
   body: JSON.stringify({ name: name, time: time }),
 });
 
