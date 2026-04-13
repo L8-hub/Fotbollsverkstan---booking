@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fotbollsverkstan – Bokning</title>
+</head>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px;">
+  <h1>Fotbollsverkstan</h1>
+  <h2>Boka öppen träning</h2>
+
+  <label for="name">Namn</label><br />
+  <input id="name" type="text" placeholder="Skriv ditt namn" style="width: 100%; padding: 10px; margin: 8px 0 16px;" />
+
+  <label for="time">Välj tid</label><br />
+  <select id="time" style="width: 100%; padding: 10px; margin: 8px 0 16px;">
+    <option value="">Välj en tid</option>
+    <option value="Måndag 17:00">Måndag 17:00</option>
+    <option value="Onsdag 17:00">Onsdag 17:00</option>
+    <option value="Lördag 10:00">Lördag 10:00</option>
+  </select>
+
+  <button onclick="bookTraining()" style="padding: 12px 20px; cursor: pointer;">Boka</button>
+
+  <h3 style="margin-top: 30px;">Bokningar</h3>
+  <ul id="bookingList"></ul>
+
+  <script>
+    function bookTraining() {
+      const name = document.getElementById("name").value.trim();
+      const time = document.getElementById("time").value;
+      const bookingList = document.getElementById("bookingList");
+
+      if (!name || !time) {
+        alert("Fyll i namn och välj en tid.");
+        return;
+      }
+
+      const listItem = document.createElement("li");
+      listItem.textContent = name + " – " + time;
+      bookingList.appendChild(listItem);
+
+      document.getElementById("name").value = "";
+      document.getElementById("time").value = "";
+    }
+  </script>
+</body>
+</html>
