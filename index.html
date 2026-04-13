@@ -5,46 +5,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fotbollsverkstan – Bokning</title>
 </head>
-<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px;">
+<body style="font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px;">
   <h1>Fotbollsverkstan</h1>
   <h2>Boka öppen träning</h2>
 
   <label for="name">Namn</label><br />
-  <input id="name" type="text" placeholder="Skriv ditt namn" style="width: 100%; padding: 10px; margin: 8px 0 16px;" />
+  <input
+    id="name"
+    type="text"
+    placeholder="Skriv ditt namn"
+    style="width: 100%; padding: 10px; margin: 8px 0 16px;"
+  />
 
-  <label for="time">Välj tid</label><br />
- <select id="time" style="width: 100%; padding: 10px; margin: 8px 0 16px;">
-  <option value="">Välj träning</option>
-  <option value="Torsdag 17–18 – Öppen träning F18 F19">
-    Torsdag 17–18 – Öppen träning F18 F19
-  </option>
-  <option value="Söndag 10–11 – Öppen träning P/F 2020–2021">
-    Söndag 10–11 – Öppen träning P/F 2020–2021
-  </option>
-  <option value="Söndag 15:15–16:15 – Öppen träning F15 F16 F17">
-    Söndag 15:15–16:15 – Öppen träning F15 F16 F17
-  </option>
-</select>
+  <label for="time">Välj träning</label><br />
+  <select id="time" style="width: 100%; padding: 10px; margin: 8px 0 16px;">
+    <option value="">Välj träning</option>
+    <option value="Torsdag 17–18 – Öppen träning F18 F19">
+      Torsdag 17–18 – Öppen träning F18 F19
+    </option>
+    <option value="Söndag 10–11 – Öppen träning P/F 2020–2021">
+      Söndag 10–11 – Öppen träning P/F 2020–2021
+    </option>
+    <option value="Söndag 15:15–16:15 – Öppen träning F15 F16 F17">
+      Söndag 15:15–16:15 – Öppen träning F15 F16 F17
+    </option>
+  </select>
 
-  <button onclick="bookTraining()" style="padding: 12px 20px; cursor: pointer;">Boka</button>
+  <button onclick="bookTraining()" style="padding: 12px 20px; cursor: pointer;">
+    Boka
+  </button>
 
-  <h3 style="margin-top: 30px;">Bokningar</h3>
-  <ul id="bookingList"></ul>
+  <h3 style="margin-top: 30px;">Torsdag 17–18 – F18 F19</h3>
+  <ul id="list1"></ul>
+
+  <h3>Söndag 10–11 – P/F 2020–2021</h3>
+  <ul id="list2"></ul>
+
+  <h3>Söndag 15:15–16:15 – F15 F16 F17</h3>
+  <ul id="list3"></ul>
 
   <script>
     function bookTraining() {
       const name = document.getElementById("name").value.trim();
       const time = document.getElementById("time").value;
-      const bookingList = document.getElementById("bookingList");
 
       if (!name || !time) {
-        alert("Fyll i namn och välj en tid.");
+        alert("Fyll i namn och välj träning.");
         return;
       }
 
-      const listItem = document.createElement("li");
-      listItem.textContent = name + " – " + time;
-      bookingList.appendChild(listItem);
+      let listId = "";
+
+      if (time.includes("Torsdag")) {
+        listId = "list1";
+      } else if (time.includes("10–11")) {
+        listId = "list2";
+      } else if (time.includes("15:15")) {
+        listId = "list3";
+      }
+
+      const li = document.createElement("li");
+      li.textContent = name;
+      document.getElementById(listId).appendChild(li);
 
       document.getElementById("name").value = "";
       document.getElementById("time").value = "";
