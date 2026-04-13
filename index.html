@@ -67,6 +67,10 @@
       const li = document.createElement("li");
       li.textContent = name;
       document.getElementById(listId).appendChild(li);
+     fetch("https://script.google.com/a/macros/unikum.net/s/AKfycbwxD6xGW_MiIAS1RsDfkQfS-wVf3qa9V2TilVJTlZTGCRgRgGdejaIU09JLgNTbm4nAPQ/exec", {
+  method: "POST",
+  body: JSON.stringify({ name: name, time: time }),
+});
 
       document.getElementById("name").value = "";
       document.getElementById("time").value = "";
