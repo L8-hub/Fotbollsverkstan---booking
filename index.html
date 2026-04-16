@@ -136,7 +136,7 @@
     <div class="card">
       <h1>Fotbollsverkstan</h1>
       <h2>Boka öppen träning</h2>
-      <p>Fyll i namn, mailadress och välj träning. Max 20 platser per grupp.</p>
+      <p>Fyll i barnets namn, mailadress och välj träning. Max 20 platser per grupp.</p>
 
       <label for="name">Barnets namn</label>
       <input id="name" type="text" placeholder="Skriv namn" />
@@ -145,12 +145,7 @@
       <input id="email" type="email" placeholder="Skriv mailadress" />
 
       <label for="time">Välj träning</label>
-      <select id="time">
-        <option value="">Välj träning</option>
-        <option value="Torsdag 17–18 – Öppen träning F18 F19">Torsdag 17–18 – Öppen träning F18 F19</option>
-        <option value="Söndag 10–11 – Öppen träning P/F 2020–2021">Söndag 10–11 – Öppen träning P/F 2020–2021</option>
-        <option value="Söndag 15:15–16:15 – Öppen träning F15 F16 F17">Söndag 15:15–16:15 – Öppen träning F15 F16 F17</option>
-      </select>
+      <select id="time"></select>
 
       <button type="button" onclick="bookTraining()">Boka plats</button>
 
@@ -159,32 +154,78 @@
       <div class="small">När bokningen gått igenom visas en bekräftelse här på sidan.</div>
     </div>
 
-    <div class="training-box">
-      <h3>Torsdag 17–18 – F18 F19</h3>
-      <div class="spots" id="spots1">Platser kvar: 20</div>
-      <ul id="list1"></ul>
-    </div>
-
-    <div class="training-box">
-      <h3>Söndag 10–11 – P/F 2020–2021</h3>
-      <div class="spots" id="spots2">Platser kvar: 20</div>
-      <ul id="list2"></ul>
-    </div>
-
-    <div class="training-box">
-      <h3>Söndag 15:15–16:15 – F15 F16 F17</h3>
-      <div class="spots" id="spots3">Platser kvar: 20</div>
-      <ul id="list3"></ul>
-    </div>
+    <div id="trainingBoxes"></div>
   </div>
 
   <script>
     const maxSpots = 20;
 
-    function updateSpots(listId, spotsId) {
-      const currentCount = document.getElementById(listId).children.length;
+    // =========================================================
+    // BYT BARA DENNA DEL VARJE VECKA
+    // Lägg in veckans pass här
+    // =========================================================
+    const trainings = [
+      {
+        id: "pass1",
+        date: "2026-04-16",
+        day: "Torsdag",
+        time: "17:00–18:00",
+        group: "Öppen träning F18 F19"
+      },
+      {
+        id: "pass2",
+        date: "2026-04-19",
+        day: "Söndag",
+        time: "10:00–11:00",
+        group: "Öppen träning P/F 2020–2021"
+      },
+      {
+        id: "pass3",
+        date: "2026-04-19",
+        day: "Söndag",
+        time: "15:15–16:15",
+        group: "Öppen träning F15 F16 F17"
+      }
+    ];
+    // =========================================================
+
+    function getTrainingLabel(training) {
+      return `${training.date} | ${training.day} ${training.time} | ${training.group}`;
+    }
+
+    function renderTrainings() {
+      const select = document.getElementById("time");
+      const boxes = document.getElementById("trainingBoxes");
+
+      select.innerHTML = '<option value="">Välj träning</option>';
+      boxes.innerHTML = "";
+
+      trainings.forEach((training) => {
+        const label = getTrainingLabel(training);
+
+        // Lägg till i dropdown
+        const option = document.createElement("option");
+        option.value = training.id;
+        option.textContent = label;
+        select.appendChild(option);
+
+        // Skapa box för varje träning
+        const box = document.createElement("div");
+        box.className = "training-box";
+        box.innerHTML = `
+          <h3>${label}</h3>
+          <div class="spots" id="spots-${training.id}">Platser kvar: ${maxSpots}</div>
+          <ul id="list-${training.id}"></ul>
+        `;
+        boxes.appendChild(box);
+      });
+    }
+
+    function updateSpots(trainingId) {
+      const listElement = document.getElementById(`list-${trainingId}`);
+      const spotsElement = document.getElementById(`spots-${trainingId}`);
+      const currentCount = listElement.children.length;
       const remaining = maxSpots - currentCount;
-      const spotsElement = document.getElementById(spotsId);
 
       if (remaining <= 0) {
         spotsElement.innerHTML = '<span class="full">Fullbokat</span>';
@@ -196,37 +237,28 @@
     async function bookTraining() {
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
-      const time = document.getElementById("time").value;
+      const selectedTrainingId = document.getElementById("time").value;
       const successMessage = document.getElementById("successMessage");
       const errorMessage = document.getElementById("errorMessage");
 
       successMessage.style.display = "none";
       errorMessage.style.display = "none";
 
-      if (!name || !email || !time) {
-        errorMessage.textContent = "Fyll i namn, mailadress och välj träning.";
+      if (!name || !email || !selectedTrainingId) {
+        errorMessage.textContent = "Fyll i barnets namn, mailadress och välj träning.";
         errorMessage.style.display = "block";
         return;
       }
 
-      let listId = "";
-      let spotsId = "";
+      const selectedTraining = trainings.find(t => t.id === selectedTrainingId);
 
-      if (time.includes("Torsdag")) {
-        listId = "list1";
-        spotsId = "spots1";
-      } else if (time.includes("10–11")) {
-        listId = "list2";
-        spotsId = "spots2";
-      } else if (time.includes("15:15")) {
-        listId = "list3";
-        spotsId = "spots3";
-      } else {
+      if (!selectedTraining) {
         errorMessage.textContent = "Kunde inte hitta rätt träning.";
         errorMessage.style.display = "block";
         return;
       }
 
+      const listId = `list-${selectedTraining.id}`;
       const currentCount = document.getElementById(listId).children.length;
 
       if (currentCount >= maxSpots) {
@@ -236,10 +268,13 @@
       }
 
       const li = document.createElement("li");
-      li.textContent = name + " (" + email + ")";
+      li.textContent = `${name} (${email})`;
       document.getElementById(listId).appendChild(li);
 
-      updateSpots(listId, spotsId);
+      updateSpots(selectedTraining.id);
+
+      const bookingTimestamp = new Date().toISOString();
+      const trainingLabel = getTrainingLabel(selectedTraining);
 
       try {
         await fetch("https://script.google.com/macros/s/AKfycbweR87aXl9f87tm0VO_-gRfgv10wFFi3jXtwNmmSwxusy_rSewh5C6KeJdhHlgMWZN0uA/exec", {
@@ -250,12 +285,18 @@
           },
           body: JSON.stringify({
             name: name,
-            time: time,
-            email: email
+            email: email,
+            trainingId: selectedTraining.id,
+            trainingDate: selectedTraining.date,
+            trainingDay: selectedTraining.day,
+            trainingTime: selectedTraining.time,
+            trainingGroup: selectedTraining.group,
+            trainingLabel: trainingLabel,
+            bookingCreatedAt: bookingTimestamp
           }),
         });
 
-        successMessage.textContent = "Tack! Din bokning är registrerad för: " + time;
+        successMessage.textContent = "Tack! Din bokning är registrerad för: " + trainingLabel;
         successMessage.style.display = "block";
 
         document.getElementById("name").value = "";
@@ -267,9 +308,7 @@
       }
     }
 
-    updateSpots("list1", "spots1");
-    updateSpots("list2", "spots2");
-    updateSpots("list3", "spots3");
+    renderTrainings();
   </script>
 </body>
 </html>
