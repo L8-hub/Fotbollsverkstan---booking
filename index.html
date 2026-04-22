@@ -5,121 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fotbollsverkstan – Bokning</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f7f4;
-      color: #1f2a1f;
-    }
-
-    .container {
-      max-width: 760px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 18px;
-      padding: 24px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-      margin-bottom: 24px;
-    }
-
-    h1 {
-      margin-top: 0;
-      font-size: 32px;
-    }
-
-    h2 {
-      margin-top: 0;
-      font-size: 22px;
-      color: #2f5d3a;
-    }
-
-    h3 {
-      margin-bottom: 8px;
-      color: #2f5d3a;
-    }
-
-    p {
-      line-height: 1.5;
-    }
-
-    label {
-      display: block;
-      margin-top: 14px;
-      margin-bottom: 6px;
-      font-weight: bold;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #cfd8cf;
-      border-radius: 10px;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-
-    button {
-      margin-top: 18px;
-      background: #2f5d3a;
-      color: white;
-      border: none;
-      padding: 14px 18px;
-      border-radius: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      width: 100%;
-      font-weight: bold;
-    }
-
-    button:hover {
-      background: #264b2f;
-    }
-
-    .success {
-      margin-top: 18px;
-      padding: 14px;
-      background: #e9f7ed;
-      color: #1f5c2f;
-      border-radius: 10px;
-      display: none;
-    }
-
-    .error {
-      margin-top: 18px;
-      padding: 14px;
-      background: #fdeaea;
-      color: #a12626;
-      border-radius: 10px;
-      display: none;
-    }
-
-    .training-box {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-      margin-bottom: 18px;
-    }
-
-    .spots {
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .full {
-      color: #a12626;
-      font-weight: bold;
-    }
-
-    .small {
-      color: #5f6f5f;
-      font-size: 14px;
-      margin-top: 6px;
-    }
+    body { margin: 0; font-family: Arial, sans-serif; background: #f4f7f4; color: #1f2a1f; }
+    .container { max-width: 760px; margin: 40px auto; padding: 20px; }
+    .card { background: white; border-radius: 18px; padding: 24px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); margin-bottom: 24px; }
+    h1 { margin-top: 0; font-size: 32px; }
+    h2 { margin-top: 0; font-size: 22px; color: #2f5d3a; }
+    h3 { margin-bottom: 8px; color: #2f5d3a; }
+    p { line-height: 1.5; }
+    label { display: block; margin-top: 14px; margin-bottom: 6px; font-weight: bold; }
+    input, select { width: 100%; padding: 12px; border: 1px solid #cfd8cf; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+    button { margin-top: 18px; background: #2f5d3a; color: white; border: none; padding: 14px 18px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; font-weight: bold; }
+    button:hover { background: #264b2f; }
+    .success { margin-top: 18px; padding: 14px; background: #e9f7ed; color: #1f5c2f; border-radius: 10px; display: none; }
+    .error { margin-top: 18px; padding: 14px; background: #fdeaea; color: #a12626; border-radius: 10px; display: none; }
+    .training-box { background: #ffffff; border-radius: 16px; padding: 18px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06); margin-bottom: 18px; }
+    .full { color: #a12626; font-weight: bold; }
+    .small { color: #5f6f5f; font-size: 14px; margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -127,7 +28,7 @@
     <div class="card">
       <h1>Fotbollsverkstan</h1>
       <h2>Boka öppen träning</h2>
-      <p>Fyll i barnets namn, mailadress och välj träning. Max 20 platser per grupp.</p>
+      <p>Fyll i barnets namn, mailadress och välj träning. Platserna uppdateras live.</p>
 
       <label for="name">Barnets namn</label>
       <input id="name" type="text" placeholder="Skriv namn" />
@@ -149,57 +50,28 @@
   </div>
 
   <script>
-    const maxSpots = 20;
-    // HÄR ÄR DIN URL FRÅN GOOGLE
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbw73_GqKyibQs4YRvaYn96MLqX59J5sUxUaqzkWCkJshoyghxai3BHk-6mQJ5_mIFnfrw/exec"
-   const trainings = [
-  { 
-    id: "v17_pass1", 
-    date: "2026-04-23", 
-    day: "Torsdag", 
-    time: "17:00–18:00", 
-    group: "Öppen träning F18 F19", 
-    limit: 20 
-  },
-  { 
-    id: "v17_pass2", 
-    date: "2026-04-26", 
-    day: "Söndag", 
-    time: "10:00–11:00", 
-    group: "Öppen träning P/F 2020–2021", 
-    limit: 20 
-  },
-  { 
-    id: "v17_pass3", 
-    date: "2026-04-26", 
-    day: "Söndag", 
-    time: "15:15–16:15", 
-    group: "Öppen träning F15 F16 F17", 
-    limit: 20 
-  },
-  { 
-    id: "v17_pass4", 
-    date: "2026-04-26", 
-    day: "Söndag", 
-    time: "17:00-18:00", 
-    group: "Plusträning 2013 gr 1", 
-    limit: 14 
-  },
-  { 
-    id: "v17_pass5", 
-    date: "2026-04-26", 
-    day: "Söndag", 
-    time: "18:00-19:00", 
-    group: "Plusträning 2013 gr 2", 
-    limit: 14 
-  }
-];
+    // =========================================================
+    // 1. DIN GOOGLE-LÄNK (Ändra bara om du gör en helt ny distribution)
+    // =========================================================
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbw73_GqKyibQs4YRvaYn96MLqX59J5sUxUaqzkWCkJshoyghxai3BHk-6mQJ5_mIFnfrw/exec";
+
+    // =========================================================
+    // 2. VECKANS PASS (Här ändrar du varje vecka!)
+    // Kom ihåg: nytt id (t.ex. v17_...) nollställer räknaren.
+    // =========================================================
+    const trainings = [
+      { id: "v17_pass1", date: "2026-04-23", day: "Torsdag", time: "17:00–18:00", group: "Öppen träning F18 F19", limit: 20 },
+      { id: "v17_pass2", date: "2026-04-26", day: "Söndag", time: "10:00–11:00", group: "Öppen träning P/F 2020–2021", limit: 20 },
+      { id: "v17_pass3", date: "2026-04-26", day: "Söndag", time: "15:15–16:15", group: "Öppen träning F15 F16 F17", limit: 20 },
+      { id: "v17_pass4", date: "2026-04-26", day: "Söndag", time: "17:00-18:00", group: "Plusträning 2013 gr 1", limit: 14 },
+      { id: "v17_pass5", date: "2026-04-26", day: "Söndag", time: "18:00-19:00", group: "Plusträning 2013 gr 2", limit: 14 }
+    ];
 
     function getTrainingLabel(training) {
       return `${training.date} | ${training.day} ${training.time} | ${training.group}`;
     }
 
-    // Hämtar bokningar från Google Sheets
+    // Hämtar bokningar från Google Sheets och uppdaterar siffrorna
     async function fetchBookings() {
       try {
         const response = await fetch(scriptUrl);
@@ -207,13 +79,15 @@
         
         trainings.forEach(training => {
           const booked = counts[training.id] || 0;
-          const remaining = maxSpots - booked;
+          const remaining = training.limit - booked;
           const spotsElement = document.getElementById(`spots-${training.id}`);
           
-          if (remaining <= 0) {
-            spotsElement.innerHTML = '<span class="full">Fullbokat</span>';
-          } else {
-            spotsElement.textContent = 'Platser kvar: ' + remaining;
+          if (spotsElement) {
+            if (remaining <= 0) {
+              spotsElement.innerHTML = '<span class="full">Fullbokat</span>';
+            } else {
+              spotsElement.textContent = 'Platser kvar: ' + remaining;
+            }
           }
         });
       } catch (error) {
@@ -221,61 +95,55 @@
       }
     }
 
-    
-   function renderTrainings() {
-  const select = document.getElementById("time");
-  const boxes = document.getElementById("trainingBoxes");
-  
-  select.innerHTML = '<option value="">Välj träning</option>';
-  boxes.innerHTML = "";
-
-  trainings.forEach((training) => {
-    // Lägg till i dropdown
-    const label = getTrainingLabel(training);
-    const option = document.createElement("option");
-    option.value = training.id;
-    option.textContent = label;
-    select.appendChild(option);
-
-    // Skapa boxarna för info om platser
-    const booked = bookingCounts[training.id] || 0;
-    const remaining = training.limit - booked;
-    const statusText = remaining <= 0 ? '<strong style="color:red;">Fullbokat</strong>' : `Platser kvar: ${remaining}`;
-
-    const box = document.createElement("div");
-    box.className = "training-box";
-    box.innerHTML = `
-      <strong>${training.date} | ${training.day} ${training.time} | ${training.group}</strong><br>
-      <span id="spots-${training.id}">${statusText}</span>
-    `;
-    boxes.appendChild(box);
-  });
-}
+    function renderTrainings() {
+      const select = document.getElementById("time");
+      const boxes = document.getElementById("trainingBoxes");
       
+      select.innerHTML = '<option value="">Välj träning</option>';
+      boxes.innerHTML = "";
+
+      trainings.forEach((training) => {
+        const label = getTrainingLabel(training);
+        
+        // Fyll dropdown-menyn
+        const option = document.createElement("option");
+        option.value = training.id;
+        option.textContent = label;
+        select.appendChild(option);
+
+        // Skapa de vita boxarna under formuläret
+        const box = document.createElement("div");
+        box.className = "training-box";
+        box.innerHTML = `
+          <h3>${label}</h3>
+          <div class="spots" id="spots-${training.id}">Laddar platser...</div>
+        `;
+        boxes.appendChild(box);
+      });
+      
+      // Hämta bokningsantal direkt
       fetchBookings();
     }
 
     async function bookTraining() {
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
-      const selectedTrainingId = document.getElementById("time").value;
-      const successMessage = document.getElementById("successMessage");
-      const errorMessage = document.getElementById("errorMessage");
+      const selectedId = document.getElementById("time").value;
+      const successMsg = document.getElementById("successMessage");
+      const errorMsg = document.getElementById("errorMessage");
 
-      successMessage.style.display = "none";
-      errorMessage.style.display = "none";
+      successMsg.style.display = "none";
+      errorMsg.style.display = "none";
 
-      if (!name || !email || !selectedTrainingId) {
-        errorMessage.textContent = "Fyll i barnets namn, mailadress och välj träning.";
-        errorMessage.style.display = "block";
+      if (!name || !email || !selectedId) {
+        errorMsg.textContent = "Fyll i alla fält.";
+        errorMsg.style.display = "block";
         return;
       }
 
-      const selectedTraining = trainings.find(t => t.id === selectedTrainingId);
-      const trainingLabel = getTrainingLabel(selectedTraining);
+      const training = trainings.find(t => t.id === selectedId);
 
       try {
-        // Vi skickar datan till Google
         await fetch(scriptUrl, {
           method: "POST",
           mode: "no-cors",
@@ -283,33 +151,24 @@
           body: JSON.stringify({
             name: name,
             email: email,
-            trainingId: selectedTraining.id,
-            trainingDate: selectedTraining.date,
-            trainingDay: selectedTraining.day,
-            trainingTime: selectedTraining.time,
-            trainingGroup: selectedTraining.group,
-            trainingLabel: trainingLabel,
+            trainingId: training.id,
+            trainingDate: training.date,
+            trainingDay: training.day,
+            trainingTime: training.time,
+            trainingGroup: training.group,
+            trainingLabel: getTrainingLabel(training),
             bookingCreatedAt: new Date().toISOString()
           }),
         });
 
-        successMessage.textContent = "Tack! Din bokning är registrerad.";
-        successMessage.style.display = "block";
-        
+        successMsg.textContent = "Tack! Din bokning är klar.";
+        successMsg.style.display = "block";
         document.getElementById("name").value = "";
         document.getElementById("email").value = "";
         document.getElementById("time").value = "";
 
-        // Uppdatera siffrorna direkt
+        // Uppdatera platserna direkt
         fetchBookings();
-        
-      } catch (error) {
-        errorMessage.textContent = "Något gick fel.";
-        errorMessage.style.display = "block";
-      }
-    }
-
-    renderTrainings();
-  </script>
-</body>
-</html>
+      } catch (e) {
+        errorMsg.textContent = "Något gick fel, försök igen.";
+        errorMsg.style.display =
