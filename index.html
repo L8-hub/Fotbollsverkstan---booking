@@ -157,158 +157,140 @@
     <div id="trainingBoxes"></div>
   </div>
 
-  <script>
-    const maxSpots = 20;
+const maxSpots = 20;
+  const scriptUrl = "HÄR_KLISTRAR_DU_IN_DIN_NYA_URL"; // En central plats för länken
 
-    // =========================================================
-    // BYT BARA DENNA DEL VARJE VECKA
-    // Lägg in veckans pass här
-    // =========================================================
-    const trainings = [
-      {
-        id: "pass1",
-        date: "2026-04-16",
-        day: "Torsdag",
-        time: "17:00–18:00",
-        group: "Öppen träning F18 F19"
-      },
-      {
-        id: "pass2",
-        date: "2026-04-19",
-        day: "Söndag",
-        time: "10:00–11:00",
-        group: "Öppen träning P/F 2020–2021"
-      },
-      {
-        id: "pass3",
-        date: "2026-04-19",
-        day: "Söndag",
-        time: "15:15–16:15",
-        group: "Öppen träning F15 F16 F17"
-      }
-    ];
-    // =========================================================
-
-    function getTrainingLabel(training) {
-      return `${training.date} | ${training.day} ${training.time} | ${training.group}`;
+  const trainings = [
+    {
+      id: "pass1",
+      date: "2026-04-16",
+      day: "Torsdag",
+      time: "17:00–18:00",
+      group: "Öppen träning F18 F19"
+    },
+    {
+      id: "pass2",
+      date: "2026-04-19",
+      day: "Söndag",
+      time: "10:00–11:00",
+      group: "Öppen träning P/F 2020–2021"
+    },
+    {
+      id: "pass3",
+      date: "2026-04-19",
+      day: "Söndag",
+      time: "15:15–16:15",
+      group: "Öppen träning F15 F16 F17"
     }
+  ];
 
-    function renderTrainings() {
-      const select = document.getElementById("time");
-      const boxes = document.getElementById("trainingBoxes");
+  function getTrainingLabel(training) {
+    return `${training.date} | ${training.day} ${training.time} | ${training.group}`;
+  }
 
-      select.innerHTML = '<option value="">Välj träning</option>';
-      boxes.innerHTML = "";
-
-      trainings.forEach((training) => {
-        const label = getTrainingLabel(training);
-
-        // Lägg till i dropdown
-        const option = document.createElement("option");
-        option.value = training.id;
-        option.textContent = label;
-        select.appendChild(option);
-
-        // Skapa box för varje träning
-        const box = document.createElement("div");
-        box.className = "training-box";
-        box.innerHTML = `
-          <h3>${label}</h3>
-          <div class="spots" id="spots-${training.id}">Platser kvar: ${maxSpots}</div>
-          <ul id="list-${training.id}"></ul>
-        `;
-        boxes.appendChild(box);
+  // NY FUNKTION: Hämtar bokningar från Google Sheets
+  async function fetchBookings() {
+    try {
+      const response = await fetch(scriptUrl);
+      const counts = await response.json();
+      
+      trainings.forEach(training => {
+        const booked = counts[training.id] || 0;
+        const remaining = maxSpots - booked;
+        const spotsElement = document.getElementById(`spots-${training.id}`);
+        
+        if (remaining <= 0) {
+          spotsElement.innerHTML = '<span class="full">Fullbokat</span>';
+        } else {
+          spotsElement.textContent = 'Platser kvar: ' + remaining;
+        }
       });
+    } catch (error) {
+      console.error("Kunde inte hämta bokningar", error);
+    }
+  }
+
+  function renderTrainings() {
+    const select = document.getElementById("time");
+    const boxes = document.getElementById("trainingBoxes");
+    select.innerHTML = '<option value="">Välj träning</option>';
+    boxes.innerHTML = "";
+
+    trainings.forEach((training) => {
+      const label = getTrainingLabel(training);
+      const option = document.createElement("option");
+      option.value = training.id;
+      option.textContent = label;
+      select.appendChild(option);
+
+      const box = document.createElement("div");
+      box.className = "training-box";
+      box.innerHTML = `
+        <h3>${label}</h3>
+        <div class="spots" id="spots-${training.id}">Laddar platser...</div>
+      `;
+      boxes.appendChild(box);
+    });
+    
+    // Anropa hämtningen så fort lådorna skapats
+    fetchBookings();
+  }
+
+  async function bookTraining() {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const selectedTrainingId = document.getElementById("time").value;
+    const successMessage = document.getElementById("successMessage");
+    const errorMessage = document.getElementById("errorMessage");
+
+    successMessage.style.display = "none";
+    errorMessage.style.display = "none";
+
+    if (!name || !email || !selectedTrainingId) {
+      errorMessage.textContent = "Fyll i barnets namn, mailadress och välj träning.";
+      errorMessage.style.display = "block";
+      return;
     }
 
-    function updateSpots(trainingId) {
-      const listElement = document.getElementById(`list-${trainingId}`);
-      const spotsElement = document.getElementById(`spots-${trainingId}`);
-      const currentCount = listElement.children.length;
-      const remaining = maxSpots - currentCount;
+    const selectedTraining = trainings.find(t => t.id === selectedTrainingId);
+    const trainingLabel = getTrainingLabel(selectedTraining);
 
-      if (remaining <= 0) {
-        spotsElement.innerHTML = '<span class="full">Fullbokat</span>';
-      } else {
-        spotsElement.textContent = 'Platser kvar: ' + remaining;
-      }
+    try {
+      await fetch(scriptUrl, { // Använder centrala URL:en här också
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          trainingId: selectedTraining.id,
+          trainingDate: selectedTraining.date,
+          trainingDay: selectedTraining.day,
+          trainingTime: selectedTraining.time,
+          trainingGroup: selectedTraining.group,
+          trainingLabel: trainingLabel,
+          bookingCreatedAt: new Date().toISOString()
+        }),
+      });
+
+      successMessage.textContent = "Tack! Din bokning är registrerad.";
+      successMessage.style.display = "block";
+      
+      // Töm fälten
+      document.getElementById("name").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("time").value = "";
+
+      // Uppdatera siffrorna direkt efter bokning
+      fetchBookings();
+      
+    } catch (error) {
+      errorMessage.textContent = "Något gick fel.";
+      errorMessage.style.display = "block";
     }
+  }
 
-    async function bookTraining() {
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const selectedTrainingId = document.getElementById("time").value;
-      const successMessage = document.getElementById("successMessage");
-      const errorMessage = document.getElementById("errorMessage");
-
-      successMessage.style.display = "none";
-      errorMessage.style.display = "none";
-
-      if (!name || !email || !selectedTrainingId) {
-        errorMessage.textContent = "Fyll i barnets namn, mailadress och välj träning.";
-        errorMessage.style.display = "block";
-        return;
-      }
-
-      const selectedTraining = trainings.find(t => t.id === selectedTrainingId);
-
-      if (!selectedTraining) {
-        errorMessage.textContent = "Kunde inte hitta rätt träning.";
-        errorMessage.style.display = "block";
-        return;
-      }
-
-      const listId = `list-${selectedTraining.id}`;
-      const currentCount = document.getElementById(listId).children.length;
-
-      if (currentCount >= maxSpots) {
-        errorMessage.textContent = "Tyvärr, den här träningen är fullbokad.";
-        errorMessage.style.display = "block";
-        return;
-      }
-
-      const li = document.createElement("li");
-      li.textContent = `${name} (${email})`;
-      document.getElementById(listId).appendChild(li);
-
-      updateSpots(selectedTraining.id);
-
-      const bookingTimestamp = new Date().toISOString();
-      const trainingLabel = getTrainingLabel(selectedTraining);
-
-      try {
-        await fetch("https://script.google.com/macros/s/AKfycbza4WwRn0Y_z2nFo3cXV27J3j2BMT-BQLzoASxcUq6xn_lW7ezAXTDi6pWSWL805_In6w/exec", {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8",
-          },
-          body: JSON.stringify({
-            name: name,
-            email: email,
-            trainingId: selectedTraining.id,
-            trainingDate: selectedTraining.date,
-            trainingDay: selectedTraining.day,
-            trainingTime: selectedTraining.time,
-            trainingGroup: selectedTraining.group,
-            trainingLabel: trainingLabel,
-            bookingCreatedAt: bookingTimestamp
-          }),
-        });
-
-        successMessage.textContent = "Tack! Din bokning är registrerad för: " + trainingLabel;
-        successMessage.style.display = "block";
-
-        document.getElementById("name").value = "";
-        document.getElementById("email").value = "";
-        document.getElementById("time").value = "";
-      } catch (error) {
-        errorMessage.textContent = "Något gick fel vid bokningen.";
-        errorMessage.style.display = "block";
-      }
-    }
-
-    renderTrainings();
+  renderTrainings();
   </script>
 </body>
 </html>
