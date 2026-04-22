@@ -205,27 +205,36 @@
       }
     }
 
-    function renderTrainings() {
-      const select = document.getElementById("time");
-      const boxes = document.getElementById("trainingBoxes");
-      select.innerHTML = '<option value="">Välj träning</option>';
-      boxes.innerHTML = "";
+    
+   function renderTrainings() {
+  const select = document.getElementById("time");
+  const boxes = document.getElementById("trainingBoxes");
+  
+  select.innerHTML = '<option value="">Välj träning</option>';
+  boxes.innerHTML = "";
 
-      trainings.forEach((training) => {
-        const label = getTrainingLabel(training);
-        const option = document.createElement("option");
-        option.value = training.id;
-        option.textContent = label;
-        select.appendChild(option);
+  trainings.forEach((training) => {
+    // Lägg till i dropdown
+    const label = getTrainingLabel(training);
+    const option = document.createElement("option");
+    option.value = training.id;
+    option.textContent = label;
+    select.appendChild(option);
 
-        const box = document.createElement("div");
-        box.className = "training-box";
-        box.innerHTML = `
-          <h3>${label}</h3>
-          <div class="spots" id="spots-${training.id}">Laddar platser...</div>
-        `;
-        boxes.appendChild(box);
-      });
+    // Skapa boxarna för info om platser
+    const booked = bookingCounts[training.id] || 0;
+    const remaining = training.limit - booked;
+    const statusText = remaining <= 0 ? '<strong style="color:red;">Fullbokat</strong>' : `Platser kvar: ${remaining}`;
+
+    const box = document.createElement("div");
+    box.className = "training-box";
+    box.innerHTML = `
+      <strong>${training.date} | ${training.day} ${training.time} | ${training.group}</strong><br>
+      <span id="spots-${training.id}">${statusText}</span>
+    `;
+    boxes.appendChild(box);
+  });
+}
       
       fetchBookings();
     }
