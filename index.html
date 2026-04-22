@@ -152,29 +152,32 @@
     const maxSpots = 20;
     // HÄR ÄR DIN URL FRÅN GOOGLE
     const scriptUrl = "https://script.google.com/macros/s/AKfycbw73_GqKyibQs4YRvaYn96MLqX59J5sUxUaqzkWCkJshoyghxai3BHk-6mQJ5_mIFnfrw/exec"
-    const trainings = [
-      {
-        id: "pass1",
-        date: "2026-04-16",
-        day: "Torsdag",
-        time: "17:00–18:00",
-        group: "Öppen träning F18 F19"
-      },
-      {
-        id: "pass2",
-        date: "2026-04-19",
-        day: "Söndag",
-        time: "10:00–11:00",
-        group: "Öppen träning P/F 2020–2021"
-      },
-      {
-        id: "pass3",
-        date: "2026-04-19",
-        day: "Söndag",
-        time: "15:15–16:15",
-        group: "Öppen träning F15 F16 F17"
-      }
-    ];
+   const trainings = [
+  { 
+    id: "v18_pass1", 
+    date: "2026-04-30", 
+    day: "Torsdag", 
+    time: "17:00–18:00", 
+    group: "Öppen träning F18 F19", 
+    limit: 20 
+  },
+  { 
+    id: "v18_pass2", 
+    date: "2026-05-03", 
+    day: "Söndag", 
+    time: "10:00–11:00", 
+    group: "Öppen träning P/F 2020–2021", 
+    limit: 20 
+  },
+  { 
+    id: "v18_pass3", 
+    date: "2026-05-03", 
+    day: "Söndag", 
+    time: "15:15–16:15", 
+    group: "Öppen träning F15 F16 F17", 
+    limit: 20 
+  }
+];
 
     function getTrainingLabel(training) {
       return `${training.date} | ${training.day} ${training.time} | ${training.group}`;
